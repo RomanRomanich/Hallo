@@ -1,44 +1,67 @@
-import tkinter as tk
-import random
-import sys
-from functools import partial
-from classes import creature
-
-def playerAtack(windowElement, enemy='enemy1'):
-    damage = random.randint(1, 6)
-    windowElement['text'] = f'You hit {enemy} at {damage} HP'
+from classes.loader import *
 
 
-window = tk.Tk()
-x = (window.winfo_screenwidth() - window.winfo_reqwidth()) / 2
-y = (window.winfo_screenheight() - window.winfo_reqheight()) / 2
-window.wm_geometry('400x250+%d+%d' % (x, y))
-window.title("test")
-labelText = tk.Label(window,
-                     text='Enemy',
-                     bg="red",
-                     fg="white",
-                     width=50)
-attackButton = tk.Button(window,
-                         text="attack",
-                         bg="darkgrey",
-                         fg="white",
-                         command=partial(playerAtack, labelText))
-defenseButton = tk.Button(window,
-                          text="defense",
-                         bg="darkgrey",
-                         fg="white")
+player = None
+enemy = None
+enemy_name = ['Wolf', 'Tiger', 'Panter']
 
 
-labelText.grid(row=0, columnspan=2)
+print(player, enemy)
 
-attackButton.grid(row=1, column=1)
-defenseButton.grid(row=1, column=0)
-# print(dir(labelText))
-# print(labelText.keys())
-# print(labelText['text'])
-# labelText['text'] = 'asd'
-# attackButton.bind("<Button-1>", playerAtack(labelText))
-# print(labelText['text'])
-window.mainloop()
-print(sys.path)
+
+def combat_circle():
+    player.attack(winElements, enemy)
+    winElements.window.after(1000, enemy.attack(winElements, player))
+
+
+def new_player():
+    player = creature.Player('New Player', 'human')
+    return player
+
+
+def new_enemy(name):
+    enemy = creature.Enemy(name, 'wolf')
+    return enemy
+
+
+def new_start():
+    global enemy
+    global player
+    player = new_player()
+    enemy = new_enemy(enemy_name[random.randint(0, 2)])
+
+
+
+if not player and not enemy:
+    print('Var not defined')
+    winElements.start_button['command'] = new_start
+    # winElements.window.update()
+    # player = new_player()
+    # enemy = new_enemy(enemy_name[random.randint(0, 2)])
+    # new_start()
+    print(player, enemy)
+if player and enemy:
+    winElements.player_name['text'] = player.creatureName
+    winElements.player_hp['text'] = player.creatureHealth
+
+    winElements.enemy_name['text'] = enemy.creatureName
+    winElements.enemy_hp['text'] = enemy.creatureHealth
+
+    winElements.attack_button['command'] = combat_circle
+    print(player, enemy)
+
+
+
+
+
+
+# player = new_player()
+# enemy = new_enemy('wolf')
+
+
+
+
+
+
+
+winElements.window.mainloop()
